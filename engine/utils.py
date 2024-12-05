@@ -35,42 +35,44 @@ def save_npy(predictions, sample_names, title="test"):
     print(f"'{title}.npy' saved.")
 
 
-def get_imgs_boundaries(dataset, selected_sample_names, split='train'):
+def get_imgs_boundaries(dataset, selected_sample_names, split='train', debug=False):
     images = []
     boundaries_lst = []
     
     for selected_sample_name in selected_sample_names:
-        print(f"Processing image: {split}/{selected_sample_name}")
+        if debug: print(f"Processing image: {split}/{selected_sample_name}")
         image = dataset.read_image(selected_sample_name)
         images.append(image)
         if split == "train":
             boundaries = dataset.load_boundaries(selected_sample_name)
             boundaries_lst.append(boundaries )
-            fig, ax = plt.subplots(1, len(boundaries) + 1, figsize=(6 * (len(boundaries) + 1), 6))
+            if debug:
+                fig, ax = plt.subplots(1, len(boundaries) + 1, figsize=(6 * (len(boundaries) + 1), 6))
 
-            ax[0].imshow(image)
-            ax[0].set_title("Original Image")
-            ax[0].axis("off")
+                ax[0].imshow(image)
+                ax[0].set_title("Original Image")
+                ax[0].axis("off")
 
-            for i in range(len(boundaries)):
-                ax[i + 1].imshow(boundaries[i], cmap='gray')
-                ax[i + 1].set_title(f"Boundary {i + 1}")
-                ax[i + 1].axis("off")
-            plt.tight_layout()
-            plt.show()
+                for i in range(len(boundaries)):
+                    ax[i + 1].imshow(boundaries[i], cmap='gray')
+                    ax[i + 1].set_title(f"Boundary {i + 1}")
+                    ax[i + 1].axis("off")
+                plt.tight_layout()
+                plt.show()
         elif split =="test":
-            plt.imshow(image) 
-            plt.title("Original Image")
-            plt.axis("off") 
-            plt.show()
+            if debug:
+                plt.imshow(image) 
+                plt.title("Original Image")
+                plt.axis("off") 
+                plt.show()
     return images, boundaries_lst
 
 
-def load_data(data_path, num_images, split): 
+def load_data(data_path, num_images, split, debug=False): 
     dataset = BoundaryDataset(data_path, split) 
     selected_sample_names = random.sample(dataset.sample_names, min(num_images, len(dataset.sample_names)))
 
-    images, boundaries = get_imgs_boundaries(dataset, selected_sample_names, split)
+    images, boundaries = get_imgs_boundaries(dataset, selected_sample_names, split, debug)
     return images, boundaries, selected_sample_names
 
 
