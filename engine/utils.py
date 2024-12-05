@@ -71,7 +71,7 @@ def load_data(data_path, num_images, split):
     selected_sample_names = random.sample(dataset.sample_names, min(num_images, len(dataset.sample_names)))
 
     images, boundaries = get_imgs_boundaries(dataset, selected_sample_names, split)
-    return images, boundaries
+    return images, boundaries, selected_sample_names
 
 
 def get_comparison(images_lst, titles_lst, cmap='gray', base_width=4, base_height=4):
