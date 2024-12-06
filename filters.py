@@ -31,16 +31,7 @@ def apply_sobel(images, ksize=3):
         sobels.append(sobel_edge)
     return grad_x_lst, grad_y_lst, sobels 
 
-def apply_felz_with_erode(images, scale=400, sigma=2, min_size=60, kernel_size=(3, 3), iterations=2):
-    """
-    Felzenswalb's graph-based segmentation과 cv2.erode 적용
-    params:
-    :scale: 클수록 더 큰 영역으로 분할, 작을수록 더 세부적인 분할
-    :sigma: Gaussian smoothing 정도
-    :min_size: 최소 분할 영역 크기
-    :kernel_size: erosion에 사용할 커널 크기 (tuple)
-    :iterations: erosion 반복 횟수
-    """
+def apply_felz(images, scale=400, sigma=2, min_size=60, kernel_size=(3, 3), iterations=0):
     felz_images = []
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, kernel_size)  # Rectangular kernel
 
@@ -87,11 +78,106 @@ def apply_gamma_correction(image_scaled_lst, gamma = 0.5 ):
         outputs.append(image_gamma_corrected)
     return outputs 
 
+def apply_erosion(images, ksize=(2, 2)):
+    outputs = [] 
+    kernel = np.ones(ksize, np.uint8)
+
+    for image in images:
+        erosion = cv2.erode(image, kernel)
+        outputs.append(erosion)
+
+    return outputs 
+
+def apply_tophat(erosion_images, ksize=(5, 5)):
+    outputs = [] 
+    kernel = np.ones(ksize, np.int8) 
+    for image in erosion_images:
+        tophat = cv2.morphologyEx(image, cv2.MORPH_TOPHAT, kernel)
+        outputs.append(tophat) 
+    return outputs
+
+def apply_threshold(images, thresh=100, max=255, type=cv2.THRESH_BINARY): # 0~255로 사전 변환 필요
+    outputs = [] 
+    for image in images:
+        _, adjusted = cv2.threshold(image, thresh, max, type)
+        outputs.append(adjusted) 
+    return outputs
+
+def apply_custom_threshold(images, thresh=100, max=255):
+    """
+    Apply a threshold operation where pixels above `thresh` are set to `max`,
+    and pixels below `thresh` retain their original value.
+    """
+    outputs = []
+    for image in images:
+        # 조건에 따라 픽셀 값 변환
+        adjusted = np.where(image > thresh, max, image)
+        outputs.append(adjusted)
+    return outputs
+
+def apply_custom_threshold2(images, thresh=100, factor=2.0):
+    """
+    Apply a custom operation:
+    - If a pixel value is below `thresh`, multiply it by `factor`.
+    - Otherwise, keep the pixel value unchanged.
+    
+    Parameters:
+    - images: List of images (numpy arrays).
+    - thresh: Threshold value.
+    - factor: Multiplication factor for pixels below `thresh`.
+    
+    Returns:
+    - List of processed images.
+    """
+    outputs = []
+    for image in images:
+        # 조건에 따라 픽셀 값 변환
+        adjusted = np.where(image < thresh, image * factor, image)
+        
+        # 픽셀 값이 255를 초과하지 않도록 클리핑
+        adjusted = np.clip(adjusted, 0, 255).astype(image.dtype)
+        outputs.append(adjusted)
+    return outputs
+
+def norm_to_255(images):
+    outputs = [] 
+    for img in images:
+        if np.max(img) <= 1:
+            modified = (img * 255).astype(np.uint8) 
+            outputs.append(modified) 
+        else:
+            print("CHECK RANGE OF THE IMAGE!")
+    return outputs 
+
+def apply_laplacian(images, ksize, border_type):
+    results = [] 
+    for image in images:
+        edge = cv2.Laplacian(image, -1, ksize=ksize, borderType=border_type)
+        results.append(edge)
+    return results 
+
+
+def apply_highboost(images, boost_factor=3):
+    highboost_images = []
+    for image in images:
+        blurred_image = cv2.GaussianBlur(image, (5, 5), 0)
+        highboost_mask = cv2.subtract(image, blurred_image)
+        highboost_image = cv2.addWeighted(image, boost_factor, highboost_mask, 1, 0)
+        highboost_images.append(highboost_image)
+    return highboost_images
 
 #### NOT IMPORTED ####
 
 def apply_kmeans(images,k=3, max_iter=100, eps=0.2):
     # BGR image
+    def bgr_to_pixels(images):
+        results = [] 
+        for image in images:
+            assert len(image.shape) == 3
+            pixels = image.reshape((-1, 3)) 
+            pixels = np.float32(pixels) 
+            results.append(pixels) 
+        return results 
     pixels_lst = bgr_to_pixels(images)
     segmented_images = []
     for idx, pixels in enumerate(pixels_lst):

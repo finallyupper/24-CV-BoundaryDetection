@@ -3,6 +3,7 @@ import numpy as np
 from engine.dataset import BoundaryDataset
 import random 
 import matplotlib.pyplot as plt 
+import os 
 
 def normalize_image(images):
     normalized_image = [(image_array - image_array.min()) / (image_array.max() - image_array.min()) for image_array in images]
@@ -31,8 +32,11 @@ def get_overlap_lst(test1_lst, test2_lst, type="and", w1=1.0, w2=1.0):
 
 def save_npy(predictions, sample_names, title="test"):
     prediction_npy = {name: array for name, array in zip(sample_names, predictions)}
-    np.save(title, prediction_npy)
-    print(f"'{title}.npy' saved.")
+    if not os.path.exists(f'{title}.npy'):
+        np.save(title, prediction_npy)
+        print(f"'{title}.npy' saved.")
+    else:
+        print("already exists")
 
 
 def get_imgs_boundaries(dataset, selected_sample_names, split='train', debug=False):
@@ -43,7 +47,7 @@ def get_imgs_boundaries(dataset, selected_sample_names, split='train', debug=Fal
         if debug: print(f"Processing image: {split}/{selected_sample_name}")
         image = dataset.read_image(selected_sample_name)
         images.append(image)
-        if split == "train":
+        if split == "train"
             boundaries = dataset.load_boundaries(selected_sample_name)
             boundaries_lst.append(boundaries )
             if debug:
@@ -93,3 +97,52 @@ def get_comparison(images_lst, titles_lst, cmap='gray', base_width=4, base_heigh
             plt.title(titles_lst[col])
             plt.axis('off')
         plt.tight_layout()
+
+def get_hists(images, type='gray', output_dir='./debug'):
+    """
+    Generate and save histograms for a list of input images.
+    
+    Parameters:
+    - images: List of RGB images (numpy arrays).
+    - type: Type of histogram to generate ('gray', 'color', or 'all').
+    - output_dir: Directory to save the histogram plot images.
+    """
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
+    for idx, image in enumerate(images):
+        plt.figure(figsize=(10, 5))
+        
+        if type == 'gray':
+            plt.hist(image.ravel(), 256, [0, 256])
+            plt.title('Grayscale Histogram')
+            plt.xlabel('Pixel Intensity')
+            plt.ylabel('Frequency')
+
+        elif type == 'color':
+            color = ('b', 'g', 'r')
+            bgr_img = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            for i, col in enumerate(color):
+                hist = cv2.calcHist([bgr_img], [i], None, [256], [0, 256])
+                plt.plot(hist, color=col)
+                plt.xlim([0, 256])
+            plt.title('Color Histograms')
+            plt.xlabel('Pixel Intensity')
+            plt.ylabel('Frequency')
+
+        elif type == 'all':
+            gray_img = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+            plt.hist(gray_img.ravel(), 256, [0, 256])
+            plt.title('Grayscale and Color Histograms')
+            plt.xlabel('Pixel Intensity')
+            plt.ylabel('Frequency')
+
+            color = ('b', 'g', 'r')
+            bgr_img = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            for i, col in enumerate(color):
+                hist = cv2.calcHist([bgr_img], [i], None, [256], [0, 256])
+                plt.plot(hist, color=col)
+                plt.xlim([0, 256])
+        
+        plt.tight_layout()
+        plt.show()
