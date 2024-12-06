@@ -31,13 +31,26 @@ def load_data(file_path):
 def main():
     canny = "../logs/canny_train.txt"
     sobel = "../logs/sobel_train.txt" 
+    ours = "../logs/1206_new2_f1sobel_l60_i0_train.txt" 
+    global1 = "../logs/1206_global1_train.txt" 
+    global2 = "../logs/1206_global2_train.txt" 
+    highlight = "../logs/1206_highlight_train.txt"
 
     canny_recall, canny_precision, canny_f1 = load_data(canny) 
     sobel_recall, sobel_precision, sobel_f1 = load_data(sobel) 
+    ours_recall, ours_precision, ours_f1 = load_data(ours) 
+    g1_recall, g1_precision, g1_f1 = load_data(global1) 
+    g2_recall, g2_precision, g2_f1 = load_data(global2) 
+    hl_recall, hl_precision, hl_f1 = load_data(highlight) 
+
 
     # F1 Score
-    plt.plot(THRESHOLD, canny_f1, label="canny", color="green") 
-    plt.plot(THRESHOLD, sobel_f1, label="sobel", color="orange")  
+    plt.plot(THRESHOLD, canny_f1, label="Canny(100, 150)", color="green") 
+    plt.plot(THRESHOLD, sobel_f1, label="Sobel", color="orange")
+    plt.plot(THRESHOLD, g1_f1, label="Global 1", color="blue")   
+    plt.plot(THRESHOLD, g2_f1, label="Global 2", color="pink")   
+    plt.plot(THRESHOLD, hl_f1, label="Highlight", color="yellow")   
+    plt.plot(THRESHOLD, ours_f1, label="Ours", color="purple") 
     plt.legend() 
     plt.xlabel("Threshold") 
     plt.ylabel("F1 score")
@@ -47,8 +60,12 @@ def main():
     plt.close()
 
     # Precision
-    plt.plot(THRESHOLD, canny_precision, label="canny", color="green") 
-    plt.plot(THRESHOLD, sobel_precision, label="sobel", color="orange")  
+    plt.plot(THRESHOLD, canny_precision, label="Canny(100, 150)", color="green") 
+    plt.plot(THRESHOLD, sobel_precision, label="Sobel", color="orange")  
+    plt.plot(THRESHOLD, g1_precision, label="Global 1", color="blue")   
+    plt.plot(THRESHOLD, g2_precision, label="Global 2", color="pink")  
+    plt.plot(THRESHOLD, hl_precision, label="Highlight", color="yellow")    
+    plt.plot(THRESHOLD, ours_precision, label="Ours", color="purple") 
     plt.legend() 
     plt.xlabel("Threshold") 
     plt.ylabel("Precision")
@@ -59,8 +76,13 @@ def main():
 
 
     # Recall
-    plt.plot(THRESHOLD, canny_recall, label="canny", color="green") 
-    plt.plot(THRESHOLD, sobel_recall, label="sobel", color="orange")  
+    plt.plot(THRESHOLD, canny_recall, label="Canny(100, 150)", color="green") 
+    plt.plot(THRESHOLD, sobel_recall, label="Sobel", color="orange")
+    plt.plot(THRESHOLD, g1_recall, label="Global 1", color="blue")   
+    plt.plot(THRESHOLD, g2_recall, label="Global 2", color="pink")   
+    plt.plot(THRESHOLD, hl_recall, label="Highlight", color="yellow")    
+    plt.plot(THRESHOLD, ours_recall, label="Ours", color="purple") 
+
     plt.legend() 
     plt.xlabel("Threshold") 
     plt.ylabel("Recall")

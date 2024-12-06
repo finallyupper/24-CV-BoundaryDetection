@@ -47,7 +47,7 @@ def get_imgs_boundaries(dataset, selected_sample_names, split='train', debug=Fal
         if debug: print(f"Processing image: {split}/{selected_sample_name}")
         image = dataset.read_image(selected_sample_name)
         images.append(image)
-        if split == "train"
+        if split == "train":
             boundaries = dataset.load_boundaries(selected_sample_name)
             boundaries_lst.append(boundaries )
             if debug:

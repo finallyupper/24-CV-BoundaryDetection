@@ -1,6 +1,11 @@
 import sys
+import os
+import numpy as np
+from tqdm import tqdm
+from cv_project_tools.core.dataset import BoundaryDataset
+from cv_project_tools.core import evaluate_boundaries
 
-name = ''
+name = '1206_global2_train'
 split = 'train'
 num_images = 200
 
@@ -12,9 +17,6 @@ log_file = open(f'/home/yoojinoh/Others/ComputerVision/24-CV-BoundaryDetection/l
 
 sys.stdout = log_file
 
-import os
-import numpy as np
-from tqdm import tqdm
 
 root_dir = "/data/yoojinoh/CV/data/"
 data_dir = os.path.join(root_dir, "project_data")
@@ -24,10 +26,6 @@ os.chdir(root_dir)
 print("Current working directory:", os.getcwd())
 
 os.chdir('/home/yoojinoh/Others/ComputerVision/24-CV-BoundaryDetection/cv_project_tools')
-
-from cv_project_tools.core.dataset import BoundaryDataset
-from cv_project_tools.core import evaluate_boundaries
-
 
 # Load the dataset using BoundaryDataset class
 dataset = BoundaryDataset(data_dir, split=split)
@@ -78,6 +76,4 @@ print('{:<10} {:<10} {:<10} {:<10}'.format('Threshold', 'Recall', 'Precision', '
 for thresh_i, res in enumerate(threshold_results):
     print('{:<10.6f} {:<10.6f} {:<10.6f} {:<10.6f}'.format(
         res.threshold, res.recall, res.precision, res.f1))
-
-# 로그 파일 닫기
 log_file.close()

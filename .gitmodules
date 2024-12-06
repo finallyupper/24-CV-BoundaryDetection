@@ -1,0 +1,3 @@
+[submodule "cv_project_tools"]
+	path = cv_project_tools
+	url = https://github.com/ewha-pai/cv_project_tools.git
