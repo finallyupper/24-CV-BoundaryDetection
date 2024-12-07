@@ -1,5 +1,13 @@
 # 24-CV-BoundaryDetection
 This repository contains code for **24-Fall Computer Vision Boundary Detection project**. The project dataset is designed to facilitate training and testing of a boundary. 
+
+## Goal
+We focus on detecting image edges using classic algorithms, deliberately avoiding machine learning or deep learning techniques. Our goal is to achieve precise boundary detection by combining efficient and interpretable methods that leverage the strengths of traditional filters and advanced post-processing techniques. The approach includes the following core components:
+- **Global Filter 1**: Enhances local contrast and reduces noise using CLAHE and Felzenszwalb segmentation.
+- **Global Filter 2**: Extracts both global edges and fine details through median blurring, Sobel filtering, and gamma correction.
+- **Highlight Filter**: Captures significant edges using Canny edge prediction and contour refinement.
+- **Morphological Processor**: Refines edges using erosion and Top-Hat transformations.
+- **Skip Connection**: Integrates outputs for robust and detailed edge maps.
   
 ## Pipeline Overview
 This is the pipeline we used for our model:
@@ -54,3 +62,11 @@ detection model:
 - Background Pixel: 0
 - Training Set: 200 images (train.zip)
 - Test Set: 100 images
+
+## Reference
+1. John Canny, A Computational Approach to Edge Detection, IEEE Transactions on Pattern Analysis and Machine Intelligence, (6):679–698, 1986.
+2.	Pedro F. Felzenszwalb and Daniel P. Huttenlocher, Efficient Graph-Based Image Segmentation, International Journal of Computer Vision, 59:167–181, 2004.
+3.	Nick Kanopoulos et al., Design of an Image Edge Detection Filter Using the Sobel Operator, IEEE Journal of Solid-State Circuits, 23(2):358–367, 1988.
+4.	Jean Serra and Pierre Soille, Mathematical Morphology and its Applications to Image Processing, Springer, 2012.
+5. Satoshi Suzuki et al., *Topological structural analysis of digitized binary images by border following*, Computer Vision, Graphics, and Image Processing, 30(1):32–46, 1985.
+6. Garima Yadav, Saurabh Maheshwari, and Anjali Agarwal, *Contrast limited adaptive histogram equalization based enhancement for real time video system*. In 2014 International Conference on Advances in Computing, Communications and Informatics (ICACCI), pages 2392–2397. IEEE, 2014.
